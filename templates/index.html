@@ -11,11 +11,7 @@
         }
         .node {
             cursor: pointer;
-        }
-        .node circle {
-            fill: #999;
-            stroke: #000;
-            stroke-width: 1.5px;
+            text-anchor: middle;
         }
         .node text {
             font: 10px sans-serif;
@@ -81,10 +77,11 @@
                     .on('click', displayInfo);
 
                 node.append('circle')
-                    .attr('r', 5);
+                    .attr('r', 10)
+                    .attr('fill', 'steelblue');
 
                 node.append('text')
-                    .attr('x', 6)
+                    .attr('x', 15)
                     .attr('y', 3)
                     .text(d => d.id);
 
