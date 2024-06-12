@@ -26,10 +26,17 @@
             stroke-opacity: 0.4;
             stroke-width: 1.5px;
         }
+        #info {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <svg></svg>
+    <div id="info">
+        <h2>Node Information</h2>
+        <pre id="node-info">Click on a node to see more information.</pre>
+    </div>
     <script>
         fetch('/api/state')
             .then(response => response.json())
@@ -48,7 +55,8 @@
 
                 const nodes = data.resources.map(resource => ({
                     id: resource.name,
-                    type: resource.type
+                    type: resource.type,
+                    details: resource.instances[0].attributes
                 }));
 
                 const links = [];
@@ -69,7 +77,8 @@
                     .call(d3.drag()
                         .on('start', dragstarted)
                         .on('drag', dragged)
-                        .on('end', dragended));
+                        .on('end', dragended))
+                    .on('click', displayInfo);
 
                 node.append('circle')
                     .attr('r', 5);
@@ -112,6 +121,11 @@
                     if (!event.active) simulation.alphaTarget(0);
                     d.fx = null;
                     d.fy = null;
+                }
+
+                function displayInfo(event, d) {
+                    const info = document.getElementById('node-info');
+                    info.textContent = JSON.stringify(d.details, null, 2);
                 }
             });
     </script>
