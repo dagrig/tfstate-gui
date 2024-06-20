@@ -1,0 +1,24 @@
+svg {
+    width: 100%;
+    height: 600px;
+  }
+  
+  .node {
+    cursor: pointer;
+    text-anchor: middle;
+  }
+  
+  .node text {
+    font: 10px sans-serif;
+  }
+  
+  .link {
+    fill: none;
+    stroke: #555;
+    stroke-opacity: 0.4;
+    stroke-width: 1.5px;
+  }
+  
+  #info {
+    margin-top: 20px;
+  }
