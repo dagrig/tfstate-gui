@@ -1,0 +1,5 @@
+Flask
+boto3
+azure-identity
+azure-storage-blob
+python-dotenv

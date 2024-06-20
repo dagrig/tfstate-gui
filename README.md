@@ -30,7 +30,7 @@ A Flask-based web application to visualize Terraform state files stored in AWS S
 1. **Clone the repository:**
 
     ```sh
-    git clone https://github.com/your-username/terraform-state-visualizer.git
+    git clone https://github.com/dagrig/terraform-state-visualizer.git
     cd terraform-state-visualizer
     ```
 
@@ -111,7 +111,3 @@ STATE_FILE_KEY_AZURE=path/to/terraform.tfstate
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize this README to better fit your project's specifics or to add more detailed instructions as needed.
