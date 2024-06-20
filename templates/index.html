@@ -2,129 +2,163 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Terraform State Visualization</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terraform State Visualizer</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden;
+        }
+        #controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
         svg {
             width: 100%;
-            height: 600px;
+            height: 100vh;
         }
         .node {
             cursor: pointer;
-            text-anchor: middle;
         }
-        .node text {
-            font: 10px sans-serif;
-        }
-        .link {
-            fill: none;
-            stroke: #555;
-            stroke-opacity: 0.4;
+        .node circle {
+            fill: #69b3a2;
+            stroke: #fff;
             stroke-width: 1.5px;
         }
-        #info {
-            margin-top: 20px;
+        .node text {
+            font-size: 10px;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+        }
+        #node-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
-    <svg></svg>
-    <div id="info">
-        <h2>Node Information</h2>
-        <pre id="node-info">Click on a node to see more information.</pre>
+    <div id="controls">
+        <button onclick="fetchState('aws')">Load AWS State</button>
+        <button onclick="fetchState('azure')">Load Azure State</button>
     </div>
+    <div id="node-info"></div>
+    <svg></svg>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
-        fetch('/api/state')
-            .then(response => response.json())
-            .then(data => {
-                const width = 960;
-                const height = 600;
+        function fetchState(provider) {
+            fetch(`/api/state/${provider}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear existing SVG elements
+                    d3.select('svg').selectAll('*').remove();
+                    
+                    const state = JSON.parse(data);
+                    const nodes = state.resources.map(resource => ({ id: resource.address, details: resource }));
+                    const links = [];
 
-                const svg = d3.select('svg')
-                    .attr('width', width)
-                    .attr('height', height);
+                    state.resources.forEach(resource => {
+                        if (resource.depends_on) {
+                            resource.depends_on.forEach(dependency => {
+                                links.push({ source: resource.address, target: dependency });
+                            });
+                        }
+                    });
 
-                const simulation = d3.forceSimulation()
-                    .force('link', d3.forceLink().id(d => d.id))
-                    .force('charge', d3.forceManyBody())
-                    .force('center', d3.forceCenter(width / 2, height / 2));
+                    const svg = d3.select('svg');
+                    const width = +svg.attr('width');
+                    const height = +svg.attr('height');
 
-                const nodes = data.resources.map(resource => ({
-                    id: resource.name,
-                    type: resource.type,
-                    details: resource.instances[0].attributes
-                }));
+                    const simulation = d3.forceSimulation(nodes)
+                        .force('link', d3.forceLink(links).id(d => d.id).distance(100))
+                        .force('charge', d3.forceManyBody().strength(-300))
+                        .force('center', d3.forceCenter(width / 2, height / 2));
 
-                const links = [];
+                    const link = svg.append('g')
+                        .attr('class', 'links')
+                        .selectAll('line')
+                        .data(links)
+                        .enter().append('line')
+                        .attr('class', 'link');
 
-                const link = svg.append('g')
-                    .attr('class', 'links')
-                    .selectAll('line')
-                    .data(links)
-                    .enter().append('line')
-                    .attr('class', 'link');
+                    const node = svg.append('g')
+                        .attr('class', 'nodes')
+                        .selectAll('g')
+                        .data(nodes)
+                        .enter().append('g')
+                        .attr('class', 'node')
+                        .on('click', displayInfo)
+                        .call(d3.drag()
+                            .on('start', dragstarted)
+                            .on('drag', dragged)
+                            .on('end', dragended));
 
-                const node = svg.append('g')
-                    .attr('class', 'nodes')
-                    .selectAll('g')
-                    .data(nodes)
-                    .enter().append('g')
-                    .attr('class', 'node')
-                    .call(d3.drag()
-                        .on('start', dragstarted)
-                        .on('drag', dragged)
-                        .on('end', dragended))
-                    .on('click', displayInfo);
+                    node.append('circle')
+                        .attr('r', 10);
 
-                node.append('circle')
-                    .attr('r', 10)
-                    .attr('fill', 'steelblue');
+                    node.append('text')
+                        .attr('dy', -3)
+                        .attr('x', 15)
+                        .style('text-anchor', 'start')
+                        .text(d => d.id);
 
-                node.append('text')
-                    .attr('x', 15)
-                    .attr('y', 3)
-                    .text(d => d.id);
+                    simulation.on('tick', () => {
+                        link
+                            .attr('x1', d => d.source.x)
+                            .attr('y1', d => d.source.y)
+                            .attr('x2', d => d.target.x)
+                            .attr('y2', d => d.target.y);
 
-                simulation
-                    .nodes(nodes)
-                    .on('tick', ticked);
+                        node
+                            .attr('transform', d => `translate(${d.x},${d.y})`);
+                    });
 
-                simulation.force('link')
-                    .links(links);
+                    function displayInfo(event, d) {
+                        const infoDiv = document.getElementById('node-info');
+                        infoDiv.innerHTML = `
+                            <h2>${d.id}</h2>
+                            <pre>${JSON.stringify(d.details, null, 2)}</pre>
+                        `;
+                    }
 
-                function ticked() {
-                    link
-                        .attr('x1', d => d.source.x)
-                        .attr('y1', d => d.source.y)
-                        .attr('x2', d => d.target.x)
-                        .attr('y2', d => d.target.y);
+                    function dragstarted(event, d) {
+                        if (!event.active) simulation.alphaTarget(0.3).restart();
+                        d.fx = d.x;
+                        d.fy = d.y;
+                    }
 
-                    node
-                        .attr('transform', d => `translate(${d.x},${d.y})`);
-                }
+                    function dragged(event, d) {
+                        d.fx = event.x;
+                        d.fy = event.y;
+                    }
 
-                function dragstarted(event, d) {
-                    if (!event.active) simulation.alphaTarget(0.3).restart();
-                    d.fx = d.x;
-                    d.fy = d.y;
-                }
+                    function dragended(event, d) {
+                        if (!event.active) simulation.alphaTarget(0);
+                        d.fx = null;
+                        d.fy = null;
+                    }
+                })
+                .catch(error => console.error('Error fetching state:', error));
+        }
 
-                function dragged(event, d) {
-                    d.fx = event.x;
-                    d.fy = event.y;
-                }
-
-                function dragended(event, d) {
-                    if (!event.active) simulation.alphaTarget(0);
-                    d.fx = null;
-                    d.fy = null;
-                }
-
-                function displayInfo(event, d) {
-                    const info = document.getElementById('node-info');
-                    info.textContent = JSON.stringify(d.details, null, 2);
-                }
-            });
+        // Initial load of state can be triggered here if needed
+        // fetchState('aws'); // or 'azure'
     </script>
 </body>
 </html>
