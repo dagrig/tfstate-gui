@@ -23,6 +23,9 @@ AZURE_STORAGE_ACCOUNT_NAME = os.getenv('AZURE_STORAGE_ACCOUNT_NAME')
 AZURE_CONTAINER_NAME = os.getenv('AZURE_CONTAINER_NAME')
 STATE_FILE_KEY_AZURE = os.getenv('STATE_FILE_KEY_AZURE')
 
+# Fetch local state file path
+LOCAL_STATE_FILE_PATH = os.getenv('LOCAL_STATE_FILE_PATH')
+
 # Initialize the S3 client
 s3 = boto3.client(
     's3',
@@ -49,6 +52,14 @@ def get_state_azure():
     blob_client = blob_service_client.get_blob_client(container=AZURE_CONTAINER_NAME, blob=STATE_FILE_KEY_AZURE)
     blob_data = blob_client.download_blob().readall()
     state_data = blob_data.decode('utf-8')
+    return jsonify(state_data)
+
+@app.route('/api/state/local', methods=['GET'])
+def get_state_local():
+    if not os.path.exists(LOCAL_STATE_FILE_PATH):
+        return jsonify({'error': 'Local state file not found'}), 404
+    with open(LOCAL_STATE_FILE_PATH, 'r') as file:
+        state_data = file.read()
     return jsonify(state_data)
 
 @app.route('/')
