@@ -56,10 +56,15 @@
       <div class="button-row">
         <button mat-raised-button color="primary" (click)="loadState()">Load State</button>
       </div>
-  
+
+       <!-- This displays Terraform State Resources -->
       <div *ngIf="terraformState" class="mt-4">
         <h3>Resources:</h3>
-        <div *ngFor="let resource of terraformState.resources">
+        <mat-form-field appearance="outline">
+          <mat-label>Filter resources</mat-label>
+          <input matInput [(ngModel)]="filterText" placeholder="Type to filter...">
+        </mat-form-field>
+        <div *ngFor="let resource of getFilteredResources()">
           <app-resource-node [resource]="resource"></app-resource-node>
         </div>
       </div>

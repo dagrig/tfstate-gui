@@ -37,13 +37,14 @@ type StateSource = 'aws' | 'azure' | 'local';
 
 export class StateViewerComponent implements OnInit {
   terraformState: TerraformState | null = null;
+  filterText: string = '';
   stateSource: StateSource = 'local';
   sourceConfig: any = {
     local: { file: null as File | null },
     aws: { bucket: '', key: '', region: '' },
     azure: { storageAccount: '', container: '', key: '' }
   };
-
+  
   constructor(private terraformStateService: TerraformStateService) {}
 
   ngOnInit() {}
@@ -62,6 +63,14 @@ export class StateViewerComponent implements OnInit {
       };
       reader.readAsText(file);
     }
+  }
+
+  getFilteredResources(): any[] {
+    if (!this.terraformState || !this.terraformState.resources) return [];
+    return this.terraformState.resources.filter((resource: any) =>
+      resource.type.toLowerCase().includes(this.filterText.toLowerCase()) ||
+      resource.name.toLowerCase().includes(this.filterText.toLowerCase())
+    );
   }
 
   loadState() {
