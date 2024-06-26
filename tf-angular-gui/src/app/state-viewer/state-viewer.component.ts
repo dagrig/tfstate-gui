@@ -48,11 +48,19 @@ export class StateViewerComponent implements OnInit {
 
   ngOnInit() {}
 
-  onFileSelected(event: Event) {
-    const element = event.target as HTMLInputElement;
-    const file = element.files?.[0];
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
     if (file) {
-      this.sourceConfig.local.file = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        try {
+          this.terraformState = JSON.parse(e.target.result);
+        } catch (error) {
+          console.error('Error parsing Terraform state file:', error);
+          // Handle error (e.g., show an error message to the user)
+        }
+      };
+      reader.readAsText(file);
     }
   }
 
