@@ -18,6 +18,7 @@ import { TerraformStateService } from '../terraform-state.service';
 import { TerraformState } from '../models/terraform-state.model';
 import { ResourceNodeComponent } from '../resource-node/resource-node.component';
 import { StateDiffComponent } from '../state-diff/state-diff.component';
+import { DiffViewerComponent } from '../diff-viewer/diff-viewer.component';
 
 type StateSource = 'aws' | 'azure' | 'local';
 
@@ -39,6 +40,7 @@ type StateSource = 'aws' | 'azure' | 'local';
     MatTabsModule,
     MatExpansionModule,
     MatIconModule,
+    DiffViewerComponent,
   ],
   templateUrl: './state-viewer.component.html',
   styleUrls: ['./state-viewer.component.scss']
@@ -56,7 +58,13 @@ export class StateViewerComponent implements OnInit {
     aws: { bucket: '', key: '', region: '' },
     azure: { storageAccount: '', container: '', key: '' }
   };
+  selectedOldFile: any;
+  selectedNewFile: any;
   
+  getStateFileContent(file: any): string {
+    return JSON.stringify(file.content, null, 2);
+  }
+
   constructor(
     private terraformStateService: TerraformStateService,
     private snackBar: MatSnackBar

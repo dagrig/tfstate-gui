@@ -22,3 +22,15 @@
   mat-progress-spinner {
     margin: 0 auto;
   }
+
+
+ .diff-controls {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+
+    mat-form-field {
+    flex: 1;
+    }
+ }
+  

@@ -1,0 +1,24 @@
+.diff-container {
+    display: flex;
+    font-family: monospace;
+  
+    .old-text, .new-text {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      overflow-x: auto;
+  
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+      }
+    }
+  
+    .added {
+      background-color: #e6ffed;
+    }
+  
+    .removed {
+      background-color: #ffeef0;
+    }
+  }

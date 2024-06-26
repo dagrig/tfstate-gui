@@ -1,0 +1,15 @@
+<!-- diff-viewer.component.html -->
+<div class="diff-container">
+    <div class="old-text">
+      <h3>Old Version</h3>
+      <pre><code><ng-container *ngFor="let change of diffResult">
+        <span *ngIf="!change.added" [class]="getLineClass(change)">{{change.value}}</span>
+      </ng-container></code></pre>
+    </div>
+    <div class="new-text">
+      <h3>New Version</h3>
+      <pre><code><ng-container *ngFor="let change of diffResult">
+        <span *ngIf="!change.removed" [class]="getLineClass(change)">{{change.value}}</span>
+      </ng-container></code></pre>
+    </div>
+  </div>

@@ -18,6 +18,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppComponent } from './app.component';
 import { StateViewerComponent } from './state-viewer/state-viewer.component';
 import { ResourceNodeComponent } from './resource-node/resource-node.component';
+import { DiffViewerComponent } from './diff-viewer/diff-viewer.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ResourceNodeComponent } from './resource-node/resource-node.component';
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatListModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    DiffViewerComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

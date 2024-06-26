@@ -82,7 +82,30 @@
           </mat-accordion>
         </mat-tab>
         <mat-tab label="Diff View" *ngIf="stateFiles.length > 1">
-          <app-state-diff [stateFiles]="stateFiles"></app-state-diff>
+          <div class="diff-controls">
+            <mat-form-field appearance="fill">
+              <mat-label>Old State</mat-label>
+              <mat-select [(ngModel)]="selectedOldFile">
+                <mat-option *ngFor="let file of stateFiles" [value]="file">
+                  {{file.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>New State</mat-label>
+              <mat-select [(ngModel)]="selectedNewFile">
+                <mat-option *ngFor="let file of stateFiles" [value]="file">
+                  {{file.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <app-diff-viewer 
+            *ngIf="selectedOldFile && selectedNewFile"
+            [oldText]="getStateFileContent(selectedOldFile)"
+            [newText]="getStateFileContent(selectedNewFile)"
+          ></app-diff-viewer>
+          <p *ngIf="!selectedOldFile || !selectedNewFile">Please select two state files to compare.</p>
         </mat-tab>
       </mat-tab-group>
     </mat-card-content>
