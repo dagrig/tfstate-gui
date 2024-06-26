@@ -15,9 +15,9 @@
   
       <div [ngSwitch]="stateSource" class="mt-3">
         <div *ngSwitchCase="'local'">
-          <button mat-raised-button color="secondary" (click)="loadState()" [disabled]="stateFiles.length >= MAX_FILES">
+          <!-- <button mat-raised-button color="secondary" (click)="loadState()" [disabled]="stateFiles.length >= MAX_FILES">
             Load State File
-          </button>
+          </button> -->
           <input #fileInput type="file" (change)="onFileSelected($event)" accept=".tfstate,.json" [disabled]="stateFiles.length >= MAX_FILES" style="display: none;">
           <div *ngFor="let file of stateFiles; let i = index" class="file-item">
             <span>{{file.name}}</span>
