@@ -109,3 +109,22 @@ mat-card {
     background: #4caf50;
     color: white;
   }
+
+  footer {
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  a {
+    color: #007bff;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
