@@ -136,3 +136,4 @@ terraform.tfstate.backup
 *.swn
 
 .vscode
+.angular/
