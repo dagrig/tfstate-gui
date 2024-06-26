@@ -1,6 +1,8 @@
 .diff-container {
     display: flex;
     font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5;
   
     .old-text, .new-text {
       flex: 1;
@@ -16,9 +18,13 @@
   
     .added {
       background-color: #e6ffed;
+      display: inline-block;
+      width: 100%;
     }
   
     .removed {
       background-color: #ffeef0;
+      display: inline-block;
+      width: 100%;
     }
   }

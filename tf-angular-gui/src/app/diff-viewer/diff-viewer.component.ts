@@ -1,4 +1,3 @@
-// diff-viewer.component.ts
 import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Change, diffLines } from 'diff';
@@ -28,5 +27,10 @@ export class DiffViewerComponent implements OnChanges {
     if (change.added) return 'added';
     if (change.removed) return 'removed';
     return '';
+  }
+
+  // New method to handle line breaks
+  splitLines(text: string): string[] {
+    return text.split('\n');
   }
 }
