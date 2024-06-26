@@ -1,0 +1,41 @@
+.resource-node {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: 100%;
+  
+    .resource-header {
+      background-color: #f0f0f0;
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  
+      .resource-type {
+        font-weight: bold;
+      }
+  
+      .resource-name {
+        margin-left: 10px;
+      }
+  
+      .expand-icon {
+        font-size: 12px;
+      }
+    }
+  
+    .resource-details {
+      padding: 10px;
+  
+      h4, h5 {
+        margin-top: 10px;
+        margin-bottom: 5px;
+      }
+  
+      ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+    }
+  }

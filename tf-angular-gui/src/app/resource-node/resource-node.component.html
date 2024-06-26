@@ -1,0 +1,35 @@
+<div>
+    <h2>Select State Source</h2>
+    <select [(ngModel)]="stateSource">
+      <option value="local">Local</option>
+      <option value="aws">AWS</option>
+      <option value="azure">Azure</option>
+    </select>
+  
+    <div [ngSwitch]="stateSource">
+      <div *ngSwitchCase="'local'">
+        <input type="file" (change)="onFileSelected($event)" accept=".tfstate">
+      </div>
+      <div *ngSwitchCase="'aws'">
+        <label>Bucket: <input [(ngModel)]="sourceConfig.aws.bucket"></label>
+        <label>Key: <input [(ngModel)]="sourceConfig.aws.key"></label>
+        <label>Region: <input [(ngModel)]="sourceConfig.aws.region"></label>
+      </div>
+      <div *ngSwitchCase="'azure'">
+        <label>Storage Account: <input [(ngModel)]="sourceConfig.azure.storageAccount"></label>
+        <label>Container: <input [(ngModel)]="sourceConfig.azure.container"></label>
+        <label>Key: <input [(ngModel)]="sourceConfig.azure.key"></label>
+      </div>
+    </div>
+  
+    <button (click)="loadState()">Load State</button>
+  
+    <div *ngIf="terraformState">
+      <h3>Resources:</h3>
+      <ul>
+        <li *ngFor="let resource of terraformState.resources">
+          <app-resource-node [resource]="resource"></app-resource-node>
+        </li>
+      </ul>
+    </div>
+  </div>

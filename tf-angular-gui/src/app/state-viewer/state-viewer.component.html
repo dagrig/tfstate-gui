@@ -1,0 +1,67 @@
+<mat-card class="state-viewer-card">
+    <mat-card-header>
+      <mat-card-title>Terraform State Viewer</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <h3>Select State Source</h3>
+      <mat-form-field appearance="fill">
+        <mat-label>State Source</mat-label>
+        <mat-select [(ngModel)]="stateSource">
+          <mat-option value="local">Local</mat-option>
+          <mat-option value="aws">AWS</mat-option>
+          <mat-option value="azure">Azure</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <div [ngSwitch]="stateSource" class="mt-3">
+        <div *ngSwitchCase="'local'">
+          <button mat-stroked-button color="primary" (click)="fileInput.click()">
+            Choose File
+          </button>
+          <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept=".tfstate">
+          <span *ngIf="sourceConfig.local.file" class="ml-2">
+            {{sourceConfig.local.file.name}}
+          </span>
+        </div>
+        <div *ngSwitchCase="'aws'" class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Bucket</mat-label>
+            <input matInput [(ngModel)]="sourceConfig.aws.bucket">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Key</mat-label>
+            <input matInput [(ngModel)]="sourceConfig.aws.key">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Region</mat-label>
+            <input matInput [(ngModel)]="sourceConfig.aws.region">
+          </mat-form-field>
+        </div>
+        <div *ngSwitchCase="'azure'" class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Storage Account</mat-label>
+            <input matInput [(ngModel)]="sourceConfig.azure.storageAccount">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Container</mat-label>
+            <input matInput [(ngModel)]="sourceConfig.azure.container">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Key</mat-label>
+            <input matInput [(ngModel)]="sourceConfig.azure.key">
+          </mat-form-field>
+        </div>
+      </div>
+  
+      <div class="button-row">
+        <button mat-raised-button color="primary" (click)="loadState()">Load State</button>
+      </div>
+  
+      <div *ngIf="terraformState" class="mt-4">
+        <h3>Resources:</h3>
+        <div *ngFor="let resource of terraformState.resources">
+          <app-resource-node [resource]="resource"></app-resource-node>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
