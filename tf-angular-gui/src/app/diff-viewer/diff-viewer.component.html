@@ -1,8 +1,28 @@
 <div class="diff-container">
-    <div class="old-text">
-      <pre><ng-container *ngFor="let change of diffResult"><span [class]="getLineClass(change)"><ng-container *ngFor="let line of splitLines(change.value)">{{line}}<br></ng-container></span></ng-container></pre>
-    </div>
-    <div class="new-text">
-      <pre><ng-container *ngFor="let change of diffResult"><span [class]="getLineClass(change)"><ng-container *ngFor="let line of splitLines(change.value)">{{line}}<br></ng-container></span></ng-container></pre>
+    <div class="diff-table">
+      <div class="diff-row header">
+        <div class="line-number">Line</div>
+        <div class="line-content">Old Version</div>
+        <div class="line-number">Line</div>
+        <div class="line-content">New Version</div>
+      </div>
+      <div class="diff-row" *ngFor="let line of diffLines">
+        <ng-container *ngIf="line.left">
+          <div class="line-number">{{line.left.number}}</div>
+          <div class="line-content" [class.removed]="line.left.removed">{{line.left.text}}</div>
+        </ng-container>
+        <ng-container *ngIf="!line.left">
+          <div class="line-number"></div>
+          <div class="line-content"></div>
+        </ng-container>
+        <ng-container *ngIf="line.right">
+          <div class="line-number">{{line.right.number}}</div>
+          <div class="line-content" [class.added]="line.right.added">{{line.right.text}}</div>
+        </ng-container>
+        <ng-container *ngIf="!line.right">
+          <div class="line-number"></div>
+          <div class="line-content"></div>
+        </ng-container>
+      </div>
     </div>
   </div>
