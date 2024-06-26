@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppComponent } from './app.component';
 import { StateViewerComponent } from './state-viewer/state-viewer.component';
@@ -37,7 +38,8 @@ import { ResourceNodeComponent } from './resource-node/resource-node.component';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
-    MatListModule
+    MatListModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

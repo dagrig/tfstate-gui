@@ -15,13 +15,17 @@
   
       <div [ngSwitch]="stateSource" class="mt-3">
         <div *ngSwitchCase="'local'">
-          <button mat-stroked-button color="primary" (click)="fileInput.click()">
-            Choose File
+          <button mat-raised-button color="secondary" (click)="loadState()" [disabled]="stateFiles.length >= MAX_FILES">
+            Load State File
           </button>
-          <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept=".tfstate">
-          <span *ngIf="sourceConfig.local.file" class="ml-2">
-            {{sourceConfig.local.file.name}}
-          </span>
+          <input #fileInput type="file" (change)="onFileSelected($event)" accept=".tfstate,.json" [disabled]="stateFiles.length >= MAX_FILES" style="display: none;">
+          <div *ngFor="let file of stateFiles; let i = index" class="file-item">
+            <span>{{file.name}}</span>
+            <button mat-icon-button color="warn" (click)="removeStateFile(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <p *ngIf="stateFiles.length >= MAX_FILES">Maximum number of files reached ({{MAX_FILES}})</p>
         </div>
         <div *ngSwitchCase="'aws'" class="form-grid">
           <mat-form-field appearance="outline">
@@ -56,17 +60,30 @@
       <div class="button-row">
         <button mat-raised-button color="primary" (click)="loadState()">Load State</button>
       </div>
-
-       <!-- This displays Terraform State Resources -->
-      <div *ngIf="terraformState" class="mt-4">
-        <h3>Resources:</h3>
-        <mat-form-field appearance="outline">
-          <mat-label>Filter resources</mat-label>
-          <input matInput [(ngModel)]="filterText" placeholder="Type to filter...">
-        </mat-form-field>
-        <div *ngFor="let resource of getFilteredResources()">
-          <app-resource-node [resource]="resource"></app-resource-node>
-        </div>
-      </div>
+  
+      <mat-tab-group *ngIf="stateFiles.length > 0">
+        <mat-tab label="Individual States">
+          <mat-accordion>
+            <mat-expansion-panel *ngFor="let stateFile of stateFiles; let i = index">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{stateFile.name}}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-form-field appearance="outline">
+                <mat-label>Filter resources</mat-label>
+                <input matInput [(ngModel)]="filterText" placeholder="Type to filter...">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+              <div *ngFor="let resource of getFilteredResources(stateFile)">
+                <app-resource-node [resource]="resource"></app-resource-node>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </mat-tab>
+        <mat-tab label="Diff View" *ngIf="stateFiles.length > 1">
+          <app-state-diff [stateFiles]="stateFiles"></app-state-diff>
+        </mat-tab>
+      </mat-tab-group>
     </mat-card-content>
   </mat-card>

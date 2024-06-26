@@ -1,0 +1,25 @@
+.state-viewer-card {
+    margin: 20px;
+  }
+  
+  .file-upload-section {
+    margin-bottom: 20px;
+  }
+  
+  .file-list {
+    margin-top: 20px;
+  }
+  
+  .file-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .file-name {
+    flex-grow: 1;
+  }
+  
+  .remove-file-button {
+    margin-left: 10px;
+  }

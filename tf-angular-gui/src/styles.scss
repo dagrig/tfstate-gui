@@ -99,3 +99,13 @@ mat-card {
 .resource-details {
   margin-left: 20px;
 }
+
+.error-snackbar {
+    background: #f44336;
+    color: white;
+  }
+  
+  .success-snackbar {
+    background: #4caf50;
+    color: white;
+  }
